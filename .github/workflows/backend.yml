@@ -11,7 +11,6 @@ jobs:
   deploy:
     name: Deploy Lambda
     runs-on: ubuntu-latest
-    # no 'needs: test' — deploys directly
 
     steps:
       - name: Checkout code
