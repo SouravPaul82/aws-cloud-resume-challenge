@@ -15,7 +15,7 @@ def lambda_handler(event, context):
     )
       
     count = int(response['Attributes']['count'])  
-
+    
     return {
         'statusCode': 200,
         'headers': {
