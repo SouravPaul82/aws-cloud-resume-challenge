@@ -29,7 +29,8 @@ jobs:
       # Run your unit tests BEFORE deploying — fail fast
       - name: Run tests
         run: |
-          pytest backend/test_lambda.py -v
+          cd backend
+          pytest test_lambda.py -v
 
   deploy:
     name: Deploy Lambda function
