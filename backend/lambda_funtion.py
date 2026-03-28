@@ -1,5 +1,5 @@
 import json
-import boto3
+import boto3 # pyright: ignore[reportMissingImports]
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('visitor-counter')
@@ -14,7 +14,7 @@ def lambda_handler(event, context):
         ReturnValues='UPDATED_NEW'
     )
       
-    count = int(response['Attributes']['count'])
+    count = int(response['Attributes']['count'])  
 
     return {
         'statusCode': 200,
