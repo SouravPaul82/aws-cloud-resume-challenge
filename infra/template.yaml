@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  AWS Cloud Resume Challenge - Backend (Lambda + DynamoDB + API Gateway)
+
+Resources:
+  # 1. The DynamoDB Table to store the visitor count
+  CloudResumeTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: visitor-counter
+      PrimaryKey:
+        Name: id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+  # 2. The Lambda Function (Your Python Code)
+  GetCountFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/             # Points to your backend folder
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.12
+      Architectures:
+        - x86_64
+      Policies:
+        # Gives Lambda permission to Read/Write to the DynamoDB table above
+        - DynamoDBCrudPolicy:
+            TableName: !Ref CloudResumeTable
+      Events:
+        # 3. The API Gateway (Creates the HTTPS Endpoint)
+        GetCountApi:
+          Type: Api
+          Properties:
+            Path: /getcount
+            Method: get
+
+Outputs:
+  # This provides the URL you'll paste into your frontend JavaScript
+  CloudResumeApi:
+    Description: "API Gateway endpoint URL for Prod stage"
+    Value: !Sub "https://g7k1pt54j2.execute-api.us-east-1.amazonaws.com/"
