@@ -3,7 +3,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('visitor-counter')  # ✅ matches your actual table name
+table = dynamodb.Table('visitor-counter')
 
 def lambda_handler(event, context):
     headers = {
@@ -13,13 +13,24 @@ def lambda_handler(event, context):
         'Content-Type': 'application/json'
     }
 
-    if event.get('httpMethod') == 'OPTIONS':
+    # ✅ HTTP API sends method here, not in httpMethod
+    # Check both locations to support REST API and HTTP API
+    http_method = (
+        event.get('requestContext', {})
+             .get('http', {})
+             .get('method', '')
+        or event.get('httpMethod', 'POST')
+    ).upper()
+
+    print(f"Received method: {http_method}")  # shows in CloudWatch logs
+    print(f"Full event: {json.dumps(event)}") # shows full event for debugging
+
+    if http_method == 'OPTIONS':
         return {'statusCode': 200, 'headers': headers, 'body': ''}
 
     try:
-        http_method = event.get('httpMethod', 'POST')
-
         if http_method == 'POST':
+            # New visitor — increment
             response = table.update_item(
                 Key={'id': 'visitors'},
                 UpdateExpression='SET visitor_count = if_not_exists(visitor_count, :zero) + :inc',
@@ -27,7 +38,9 @@ def lambda_handler(event, context):
                 ReturnValues='UPDATED_NEW'
             )
             count = int(response['Attributes']['visitor_count'])
+
         else:
+            # GET — just read, no increment
             response = table.get_item(Key={'id': 'visitors'})
             count = int(response.get('Item', {}).get('visitor_count', 0))
 
