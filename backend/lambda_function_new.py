@@ -3,7 +3,7 @@ import boto3 # pyright: ignore[reportMissingImports]
 from botocore.exceptions import ClientError # pyright: ignore[reportMissingImports]
 
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('visitor-count')  # change to your actual table name
+table = dynamodb.Table('visitor-counter')  # change to your actual table name
 
 def lambda_handler(event, context):
     headers = {
