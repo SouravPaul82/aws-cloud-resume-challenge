@@ -44,11 +44,9 @@ async function fetchVisitorCount() {
     const count = data.count ?? data.views ?? data.visitor_count ?? "—";
     animateCount(el, count);
 
-  } catch (err) {
-    console.warn("Visitor counter unavailable:", err.message);
-    el.textContent = "—";
-  }
-}
+   
+  
+
 
 // Smoothly count up to the final number
 function animateCount(el, target) {
