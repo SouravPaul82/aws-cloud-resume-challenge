@@ -1,9 +1,9 @@
 import json
-import boto3 # pyright: ignore[reportMissingImports]
-from botocore.exceptions import ClientError # pyright: ignore[reportMissingImports]
+import boto3
+from botocore.exceptions import ClientError
 
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('visitor-counter')  # change to your actual table name
+table = dynamodb.Table('visitor-counter')  # ✅ matches your actual table name
 
 def lambda_handler(event, context):
     headers = {
@@ -13,7 +13,6 @@ def lambda_handler(event, context):
         'Content-Type': 'application/json'
     }
 
-    # Handle preflight CORS request from browser
     if event.get('httpMethod') == 'OPTIONS':
         return {'statusCode': 200, 'headers': headers, 'body': ''}
 
@@ -21,7 +20,6 @@ def lambda_handler(event, context):
         http_method = event.get('httpMethod', 'POST')
 
         if http_method == 'POST':
-            # New visitor — increment count
             response = table.update_item(
                 Key={'id': 'visitors'},
                 UpdateExpression='SET visitor_count = if_not_exists(visitor_count, :zero) + :inc',
@@ -29,9 +27,7 @@ def lambda_handler(event, context):
                 ReturnValues='UPDATED_NEW'
             )
             count = int(response['Attributes']['visitor_count'])
-
         else:
-            # GET — just read count, no increment
             response = table.get_item(Key={'id': 'visitors'})
             count = int(response.get('Item', {}).get('visitor_count', 0))
 
