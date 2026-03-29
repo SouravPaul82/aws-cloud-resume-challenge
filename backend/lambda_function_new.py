@@ -1,6 +1,6 @@
 import json
-import boto3
-from botocore.exceptions import ClientError
+import boto3 # pyright: ignore[reportMissingImports]
+from botocore.exceptions import ClientError # pyright: ignore[reportMissingImports]
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('visitor-count')  # change to your actual table name
