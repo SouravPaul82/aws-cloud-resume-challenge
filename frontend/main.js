@@ -11,12 +11,39 @@ const COUNTER_API = "https://g7k1pt54j2.execute-api.us-east-1.amazonaws.com/coun
 async function fetchVisitorCount() {
   const el = document.getElementById("visitorCount");
   try {
-    const res = await fetch(COUNTER_API, { method: "POST" });
-    if (!res.ok) throw new Error("Non-OK response");
+    const lastVisit = localStorage.getItem("lastVisitTime");
+    const now = Date.now();
+    const threeHours = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+
+    const isNewVisit = !lastVisit || (now - parseInt(lastVisit)) > threeHours;
+
+    let res;
+    if (isNewVisit) {
+      // New visitor OR more than 3 hours since last visit — increment count
+      res = await fetch(COUNTER_API, { method: "POST" });
+      if (!res.ok) throw new Error("Non-OK response");
+      // Save current timestamp so we don't count again for 3 hours
+      localStorage.setItem("lastVisitTime", now.toString());
+    } else {
+      // Within 3 hours — just read the count, don't increment
+      res = await fetch(COUNTER_API, { method: "GET" });
+      if (!res.ok) throw new Error("Non-OK response");
+    }
+
     const data = await res.json();
-    // Lambda should return { count: <number> }
     const count = data.count ?? data.views ?? data.visitor_count ?? "—";
     animateCount(el, count);
+
+  } catch (err) {
+    console.warn("Visitor counter unavailable:", err.message);
+    el.textContent = "—";
+  }
+}
+
+    const data = await res.json();
+    const count = data.count ?? data.views ?? data.visitor_count ?? "—";
+    animateCount(el, count);
+
   } catch (err) {
     console.warn("Visitor counter unavailable:", err.message);
     el.textContent = "—";
