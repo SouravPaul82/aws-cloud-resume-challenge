@@ -5,7 +5,7 @@
 ───────────────────────────────────────────── */
 
 // ── 1. Visitor Counter (AWS API Gateway → Lambda → DynamoDB) ──
-const COUNTER_API = "https://g7k1pt54j2.execute-api.us-east-1.amazonaws.com/default/count";
+const COUNTER_API = "https://g7k1pt54j2.execute-api.us-east-1.amazonaws.com/count";
 
 async function fetchVisitorCount() {
   // ✅ Fix 1 — ID matches index.html id="visitor_count"
