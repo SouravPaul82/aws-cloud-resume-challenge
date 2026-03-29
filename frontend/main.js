@@ -5,48 +5,40 @@
 ───────────────────────────────────────────── */
 
 // ── 1. Visitor Counter (AWS API Gateway → Lambda → DynamoDB) ──
-// Replace this URL with your own API Gateway endpoint after deployment
-const COUNTER_API = "https://g7k1pt54j2.execute-api.us-east-1.amazonaws.com/count";
+const COUNTER_API = "https://g7k1pt54j2.execute-api.us-east-1.amazonaws.com/default/count";
 
 async function fetchVisitorCount() {
-  const el = document.getElementById("visitorCount");
+  // ✅ Fix 1 — ID matches index.html id="visitor_count"
+  const el = document.getElementById("visitor_count");
   try {
     const lastVisit = localStorage.getItem("lastVisitTime");
     const now = Date.now();
-    const threeHours = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+    const threeHours = 3 * 60 * 60 * 1000;
 
     const isNewVisit = !lastVisit || (now - parseInt(lastVisit)) > threeHours;
 
     let res;
     if (isNewVisit) {
-      // New visitor OR more than 3 hours since last visit — increment count
+      // New visitor — POST to increment
       res = await fetch(COUNTER_API, { method: "POST" });
       if (!res.ok) throw new Error("Non-OK response");
-      // Save current timestamp so we don't count again for 3 hours
       localStorage.setItem("lastVisitTime", now.toString());
     } else {
-      // Within 3 hours — just read the count, don't increment
+      // Within 3 hours — GET to just read
       res = await fetch(COUNTER_API, { method: "GET" });
       if (!res.ok) throw new Error("Non-OK response");
     }
 
+    // ✅ Fix 2 — these lines are INSIDE the function, not floating outside
     const data = await res.json();
     const count = data.count ?? data.views ?? data.visitor_count ?? "—";
     animateCount(el, count);
 
   } catch (err) {
     console.warn("Visitor counter unavailable:", err.message);
-    el.textContent = "—";
+    if (el) el.textContent = "—";
   }
 }
-
-    const data = await res.json();
-    const count = data.count ?? data.views ?? data.visitor_count ?? "—";
-    animateCount(el, count);
-
-   
-  
-
 
 // Smoothly count up to the final number
 function animateCount(el, target) {
@@ -57,7 +49,7 @@ function animateCount(el, target) {
   function step(now) {
     const elapsed = now - start;
     const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3); // ease-out-cubic
+    const eased = 1 - Math.pow(1 - progress, 3);
     el.textContent = Math.floor(from + (target - from) * eased).toLocaleString();
     if (progress < 1) requestAnimationFrame(step);
     else el.textContent = target.toLocaleString();
@@ -74,7 +66,6 @@ const revealObserver = new IntersectionObserver(
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add("visible");
-        // Don't unobserve — keep visible once shown
       }
     });
   },
@@ -84,7 +75,7 @@ const revealObserver = new IntersectionObserver(
 document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
 
 
-// ── 3. Skill Bar Animation (trigger when section enters view) ──
+// ── 3. Skill Bar Animation ──
 const skillsSection = document.getElementById("skills");
 let barsAnimated = false;
 
