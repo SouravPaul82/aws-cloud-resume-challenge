@@ -9,7 +9,7 @@ class TestLambdaHandler(unittest.TestCase):
     @patch('lambda_function.table')
     def test_returns_visitor_count(self, mock_table):
         """Happy path: DynamoDB returns a count successfully."""
-        from backend.lambda_function_new import lambda_handler # pyright: ignore[reportMissingImports]
+        from backend.lambda_function import lambda_handler # pyright: ignore[reportMissingImports]
 
         mock_table.update_item.return_value = {
             'Attributes': {'visitor_count': 42}
@@ -24,7 +24,7 @@ class TestLambdaHandler(unittest.TestCase):
     @patch('lambda_function.table')
     def test_handles_dynamodb_error(self, mock_table):
         """DynamoDB failure should return 500, not crash."""
-        from backend.lambda_function_new import lambda_handler # pyright: ignore[reportMissingImports]
+        from backend.lambda_function import lambda_handler # pyright: ignore[reportMissingImports]
         from botocore.exceptions import ClientError # pyright: ignore[reportMissingImports]
 
         mock_table.update_item.side_effect = ClientError(
