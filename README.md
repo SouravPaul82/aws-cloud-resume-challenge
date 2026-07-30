@@ -132,39 +132,3 @@ The project is deployed to AWS with the following architecture:
 2. **Backend API** runs on AWS Lambda with API Gateway
 3. **Infrastructure** is managed through IaC automation
 
-## 📚 Resources
-
-- [AWS Cloud Resume Challenge](https://www.cloudresumechallenge.dev/)
-- [AWS Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/)
-- [AWS Documentation](https://docs.aws.amazon.com/)
-
-## 🤝 Contributing
-
-Contributions are welcome! To contribute:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is open source. Please check for any LICENSE file in the repository for specific licensing information.
-
-## 👤 Author
-
-**Sourav Paul**
-- GitHub: [@SouravPaul82](https://github.com/SouravPaul82)
-
-## 📞 Support
-
-For issues, questions, or feedback:
-- Open an [Issue](https://github.com/SouravPaul82/aws-cloud-resume-challenge/issues)
-- Check existing discussions in the repository
-
----
-
-**Last Updated**: July 2026
-
-Happy coding! 🚀
